@@ -1,0 +1,49 @@
+name: Deploy Shinylive application
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Shinylive
+        run: pip install --upgrade shinylive
+
+      - name: Export Shinylive app to docs/
+        run: shinylive export . docs
+        
+      - name: Copy ads.txt to docs/
+        run: cp ads.txt docs/
+
+      - name: Upload website artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "docs/"
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
