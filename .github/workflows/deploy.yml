@@ -21,8 +21,8 @@ jobs:
       - name: Export Shinylive app to docs/
         run: shinylive export . docs
         
-      - name: Copy ads.txt to docs/
-        run: cp ads.txt docs/
+      # - name: Copy ads.txt to docs/
+      #   run: cp ads.txt docs/
 
       - name: Upload website artifact
         uses: actions/upload-pages-artifact@v3
